@@ -1,0 +1,136 @@
+mapa_prioridad <- {
+    "alto": 3, 
+    "medio": 2, 
+    "bajo": 1
+}
+
+lista_tareas <- []
+tiempo_breaks_total <- 0
+tiempo_total_necesario <- 0
+
+# INPUT
+
+Get tiempo_disponible from user
+Get unidad_disponible from user
+
+IF unidad_disponible == "hrs" THEN:
+    tiempo_disponible <- tiempo_disponible * 60
+END IF
+
+Get quiere_breaks
+IF quiere_breaks == "si" THEN:
+    Get duracion_break from user
+    Get cantidad_breaks from user
+    tiempo_breaks_total <- duracion_break * cantidad_breaks
+END IF
+
+agregando_tareas <- "agregar"
+
+WHILE agregando_tareas == "agregar" DO:
+    Display "-- Nueva Tarea --"
+    Get nombre_tarea from user
+    Get tiempo_tarea from user
+    Get unidad_tiempo from user
+    Get nivel_prioridad from user
+
+    IF unidad_tiempo == "hrs" THEN:
+        tiempo_tarea <- tiempo_tarea * 60
+    END IF
+
+    nueva_tarea <- {
+        "nombre": nombre_tarea,
+        "tiempo": tiempo_tarea,
+        "nivel": nivel_prioridad,
+        "puntaje": mapa_prioridad[nivel_prioridad],
+        "estado": "activa"
+    }
+
+    Add nueva_tarea to lista_tareas
+
+    Get agregando_tareas 
+
+    IF agregando_tareas == "modificar" THEN:
+        Get nombre_modificar from user
+        
+        FOR EACH tarea_actual IN lista_tareas DO:
+            IF tarea_actual["nombre"] == nombre_modificar THEN:
+                Get nuevo_tiempo from user
+                tarea_actual["tiempo"] <- nuevo_tiempo
+                Display "Tiempo modificado correctamente"
+            END IF
+        END FOR
+        
+        Get agregando_tareas
+    END IF
+END WHILE
+
+# PROCESS
+cantidad_tareas <- length of lista_tareas
+
+FOR i IN range(cantidad_tareas) DO:
+    FOR j IN range(0, cantidad_tareas - i - 1) DO:
+        tarea_actual <- lista_tareas[j]
+        tarea_siguiente <- lista_tareas[j + 1]
+
+        IF tarea_actual["puntaje"] < tarea_siguiente["puntaje"] THEN:
+            lista_tareas[j] <- tarea_siguiente
+            lista_tareas[j + 1] <- tarea_actual
+        
+        ELIF tarea_actual["puntaje"] == tarea_siguiente["puntaje"] THEN:
+            IF tarea_actual["tiempo"] > tarea_siguiente["tiempo"] THEN:
+                lista_tareas[j] <- tarea_siguiente
+                lista_tareas[j + 1] <- tarea_actual
+            END IF
+        END IF
+    END FOR
+END FOR
+
+tiempo_total_necesario <- tiempo_breaks_total
+
+FOR EACH tarea IN lista_tareas DO:
+    tiempo_total_necesario <- tiempo_total_necesario + tarea["tiempo"]
+END FOR
+
+# OUTPUT
+#RESUMEN DE PLANIFICACIÓN
+
+IF tiempo_total_necesario <= tiempo_disponible THEN:
+    Display "¡ÉXITO! Sí puedes realizar todas tus tareas en tiempo y en orden."
+ELSE:
+    tiempo_faltante <- tiempo_total_necesario - tiempo_disponible
+    Display "ALERTA: Te faltan" + tiempo_faltante + "minutos para poder realizar todo."
+    
+    tiempo_recuperado <- 0
+    indice <- cantidad_tareas - 1
+    
+    WHILE tiempo_recuperado < tiempo_faltante AND indice >= 0 DO:
+        tarea_a_posponer <- lista_tareas[indice]
+        tarea_a_posponer["estado"] <- "pospuesta"
+        tiempo_recuperado <- tiempo_recuperado + tarea_a_posponer["tiempo"]
+        
+        Display "-> Sugerencia: Posponer o eliminar la tarea '" + tarea_a_posponer["nombre"] + "' para recuperar " + tarea_a_posponer["tiempo"] + " minutos."
+        indice <- indice - 1
+    END WHILE
+END IF
+
+#ORDEN FINAL SUGERIDO
+
+FOR i IN range(cantidad_tareas - 1) DO:
+    tarea_actual <- lista_tareas[i]
+    tarea_siguiente <- lista_tareas[i + 1]
+    
+    IF tarea_actual["estado"] == "activa" AND tarea_siguiente["estado"] == "activa" THEN:
+        IF tarea_actual["puntaje"] == tarea_siguiente["puntaje"] THEN:
+            Display "* NOTA: Las tareas '" +  tarea_actual["nombre"] + "' y '", tarea_siguiente["nombre"] + "' tienen la misma prioridad."
+            Display "  Se tomó primero '" + tarea_actual["nombre"] + "' porque toma menos tiempo de realizar (", tarea_actual["tiempo"] + " min)."
+        END IF
+    END IF
+END FOR
+
+FOR EACH tarea IN lista_tareas DO:
+    IF tarea["estado"] == "activa" THEN:
+        Display "[PROGRAMADA] "+ tarea["nombre"] + " (", tarea["tiempo"] + " min)"
+    ELSE:
+        Display "[POSPUESTA]  "+ tarea["nombre"] + " (No alcanzó el tiempo)"
+    END IF
+END FOR
