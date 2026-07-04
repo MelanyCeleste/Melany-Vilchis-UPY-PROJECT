@@ -18,6 +18,20 @@ Dictionaries: They are essential to structure information. Each individual task 
 
 Loops: A main "while" loop is used that allows the user to continue adding multiple tasks one after another until they decide to stop. "For" cycles are used to iterate over the list of tasks when sorting them (bubble algorithm) and to calculate the total time needed by adding the time of each item in the list.
 
+# Environment and Tools
+
+Language: Python 3.x
+
+Version Control: Git
+
+Hosting Platform: GitHub
+
+# How to run the program
+
+Ensure you have Python installed on your system. Clone this repository or download the source file:
+
+    https://github.com/MelanyCeleste/Melany-Vilchis-UPY-PROJECT.git
+
 # AI usage statement
 
 Artificial Intelligence (Gemini) tools were used for the development and documentation of this project:
