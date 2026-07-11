@@ -1,7 +1,7 @@
 class ValortiempoError(Exception):
     pass
 
-class stringdigitoError(Exception):
+class StringdigitoError(Exception):
     pass
 
 mapa_prioridad = {
@@ -40,20 +40,20 @@ if quiere_breaks == "si":
         try:
             try:
                 duracion_break = float(input("¿Cuánto tiempo durará cada break? (en min): "))
-            except stringdigitoError:
-                raise stringdigitoError("Debes ingresar un número entero en digitos")
+            except StringdigitoError:
+                raise StringdigitoError("Debes ingresar un número entero en digitos")
 
             try:
                 cantidad_breaks = int(input("¿Cuántos breaks deseas agregar?: "))
-            except stringdigitoError:
-                raise stringdigitoError("Debes ingresar un número entero en digitos")
+            except StringdigitoError:
+                raise StringdigitoError("Debes ingresar un número entero en digitos")
 
             if duracion_break < 0 or cantidad_breaks < 0:
                 raise ValortiempoError("El tiempo y la cantidad de breaks no pueden ser negativos.")
 
             break
 
-        except (stringdigitoError, ValortiempoError) as e:
+        except (StringdigitoError, ValortiempoError) as e:
             print(f"Error: {e}")
             # tiempo total de los breaks
 
