@@ -18,6 +18,10 @@ Dictionaries: They are essential to structure information. Each individual task 
 
 Loops: A main "while" loop is used that allows the user to continue adding multiple tasks one after another until they decide to stop. "For" cycles are used to iterate over the list of tasks when sorting them (bubble algorithm) and to calculate the total time needed by adding the time of each item in the list.
 
+# Logging Errors
+
+My logs are recording application startup, successful task creation (INFO), and user data entry errors (WARNING/ERROR) so that we can audit the correct operation of the scheduler and understand what invalid data the user is trying to enter.
+
 # Environment and Tools
 
 Language: Python 3.x
